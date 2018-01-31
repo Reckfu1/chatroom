@@ -19,6 +19,6 @@ export default {
 #interface{
     width:56%;
     height: 600px;
-    background-color: red;
+    background-color: white;
 }
 </style>
