@@ -1,6 +1,7 @@
 <template>
     <div id="interface">
-        
+        <div class="room-name"></div>
+        <div class="message-input"></div>
     </div>
 </template>
 
@@ -19,6 +20,21 @@ export default {
 #interface{
     width:56%;
     height: 600px;
-    background-color: white;
+    background-color: #dde4ee;
+    position: relative;
+}
+.room-name{
+    height: 95px;
+    width:100%;
+    background-color: #ebf1f6;
+    position: absolute;
+    top:0;
+}
+.message-input{
+    height: 40px;
+    width:100%;
+    background-color: #fff;
+    position: absolute;
+    bottom:0;
 }
 </style>

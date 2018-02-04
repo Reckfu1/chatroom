@@ -37,7 +37,8 @@ export default {
     /*#E9EEF4*/
     /*background-color:red;*/
     position: relative;
-    box-shadow: 5px 0 10px rgba(0,0,0,.1);
+    box-shadow: 1px 0 5px rgba(0,0,0,.1);
+    z-index: 1000;
 }
 
 /*chat-item*/
