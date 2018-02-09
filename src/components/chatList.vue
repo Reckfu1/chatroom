@@ -3,7 +3,7 @@
         <div class="chat-item">
             <img class="chat-item-img" src="../assets/josh-felise-79991.jpg"></img>
             <div class="chat-item-detail">
-                <div class="chat-item-name">r空我eck</div>
+                <div class="chat-item-name">大宋的我</div>
                 <div class="chat-item-content">阿萨德:daskgjn你阿拉啊啥的啊啥的维</div>
                         <!-- timeline写这里面 便于定位 absolute -->
                 <span class="chat-item-time">13:24</span>

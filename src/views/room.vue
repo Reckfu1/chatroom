@@ -40,7 +40,7 @@ export default {
 .room-wrapper{
     width:1100px;
     height: 600px;
-    box-shadow: 0 5px 20px rgba(0,0,0,.3);
+    box-shadow: 0 0 30px rgba(0,0,0,.3);
     background-color: #fff;
     display: flex;
 }

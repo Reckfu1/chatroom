@@ -2,8 +2,11 @@
     <div id="online">
         <div class="person">
             <div class="person-detail">
-                <img class="person-img" src="../assets/josh-felise-79991.jpg"></img>
-                <div class="person-name">reckful</div>
+                <img class="person-img" src="../assets/me.jpg"></img>
+                <div class="person-profile">
+                    <div class="person-name">Zeki Ghuliam</div>
+                    <div class="person-info">UI/UX Designer</div>
+                </div>
             </div>
             <div class="person-options">
                 <!-- sort / format align left/menu -->
@@ -37,15 +40,15 @@ export default {
     display: flex;
 }
 .person-detail{
-    height: 95px;
+    height: 80px;
     width:75%;
-    background-color: #7C7EAF;
+    background-color: #7b7eae;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 .person-options{
-    height: 95px;
+    height: 80px;
     width:25%;
     background-color: #868abb;
     display: flex;
@@ -53,10 +56,28 @@ export default {
     align-items: center;
 }
 .person-img{
-    height: 30px;
-    width:30px;
+    height: 38px;
+    width:38px;
+}
+.person-profile{
+    height: 46px;
+    width:60%;
+    /*background-color: red;*/
+    color:#fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    left: 8px;
 }
 .person-name{
-
+    font-weight: bold;
+    font-size: 14px;
 }
+.person-info{
+    font-size: 12px;
+    font-weight: 300;
+    opacity: .8;
+}
+
 </style>
