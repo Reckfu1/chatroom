@@ -4,9 +4,13 @@
             <div class="room-name">Discuss UI/UX(32)</div>
         </div>
         <div class="message-input">
-            <div class="send-img"></div>
+            <div class="send-img">
+                <!-- icon image -->
+            </div>
             <input type="text" class="typing" placeholder="Type something here...">
-            <div class="send-emoji"></div>
+            <div class="send-emoji">
+                <!-- icon tag_faces -->
+            </div>
         </div>
     </div>
 </template>
@@ -56,12 +60,19 @@ export default {
     width:7%;
     background-color: rgba(255,255,255,.1);
 }
+.send-img{
+    box-shadow: 1px 0 10px rgba(0,0,0,.1);
+    /*?????????*/
+    z-index: 100;
+}
+.send-emoji{
+    box-shadow: -1px 0 10px rgba(0,0,0,.1);
+}
 .typing{
     /*font-style: italic;*/
     font-weight: 300;
     height: 40px;
     width:86%;
-    box-shadow: 0 0 10px rgba(0,0,0,.1);
     line-height: 40px;
     color:gray;
     text-indent: 8px;
