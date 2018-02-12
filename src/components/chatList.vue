@@ -95,7 +95,7 @@ export default {
     background-color: #fff;
     position: absolute;
     bottom:0;
-    box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+    box-shadow: 0 -1px 10px rgba(0,0,0,0.1);
     display: flex;
     justify-content: space-around;
     align-items: center;
