@@ -6,9 +6,11 @@
         <section>
             <mu-text-field label="Username" hintText="" type="text" labelFloat underlineFocusClass="focus-line" labelFocusClass="focus-label" labelClass="label" underlineClass="line" :inputClass="{username_input_change:usernameIsBlur,username_input:usernameIsFocus}" @blur="blurNameColor" @focus="focusNameColor" v-model="user"/>
             <mu-text-field label="Password" hintText="" type="password" labelFloat underlineFocusClass="focus-line" labelFocusClass="focus-label" labelClass="label" underlineClass="line" :inputClass="{password_input_change:passwdIsBlur,password_input:passwdIsFocus}" @blur="blurPasswdColor" @focus="focusPasswdColor" v-model="password"/>
-            <mu-flat-button @click="register" label="Sign Up" class="demo-flat-button" labelClass="registerbtn" color="#fff" rippleColor="#fff"/>
+            <mu-flat-button @click="userRegister" label="Sign Up" class="demo-flat-button" labelClass="registerbtn" color="#fff" rippleColor="#fff"/>
         </section>
-        <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopup">Fail To Register！</mu-popup>
+        <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopup" @hide="backToIndex">
+            {{registerSign?'Register Success！':'Fail to register, please try again.'}}
+        </mu-popup>
     </div>
 </template>
 
@@ -25,27 +27,48 @@ export default {
                 passwdIsBlur:false,
                 disabled:true,
                 // popup
-                topPopup:false
+                topPopup:false,
+                // 作为跳转条件以及文字显示条件
+                registerSign:false 
         }
     },
     methods:{
-        register(){
-            let data={
-                user_temp:this.user,
-                password:md5(this.password)
+        userRegister(){
+            // 若其中一项为空
+            if(!this.user||!this.password){
+                this.registerSign=false
+                this.topPopup=true
             }
-            this.axios.post('auth/register',data)
-                .then(res => {
-                    console.log(res.data)
-                    if(res.data.success){
-                        this.$router.push({
-                            path:'/'
-                        })
-                    }
-                    else{
-                        this.topPopup=true
-                    }
+            else{
+                let data={
+                    user_temp:this.user,
+                    password:md5(this.password)
+                }
+                this.axios.post('auth/register',data)
+                    .then(res => {                     
+                        if(res.data.success){
+                            this.registerSign=true
+                            this.topPopup=true
+                        }
+                        else{
+                            this.registerSign=false
+                            this.topPopup=true
+                        }
+                    })
+            }
+        },
+        // 弹出框隐藏触发函数,跳转至首页
+        backToIndex(){
+            // 检查标记，若真再跳转，不然注册失败也会跳转
+            if(this.registerSign){
+                this.$router.push({
+                    path:'/'
                 })
+            }
+            else{
+                this.user='',
+                this.password=''
+            }
         },
         blurNameColor(){
             this.usernameIsBlur=true
@@ -138,13 +161,14 @@ export default {
 }
 /*popup*/
 .demo-popup-top {
-  width: 100%;
-  opacity: .8;
-  height: 48px;
-  line-height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 375px;
+    font-family: 'Open Sans','Avenir', Helvetica, Arial, sans-serif;
+    width: 100%;
+    opacity: .7;
+    height: 44px;
+    line-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 375px;
 }
 </style>

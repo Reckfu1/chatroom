@@ -9,19 +9,29 @@
                 <div class="wrap-left-mask"></div>
             </div>
             <div class="wrap-right">
-                <mu-text-field label="Username" hintText="" type="text" labelFloat underlineFocusClass="common-focus-line" labelFocusClass="common-focus-label" labelClass="common-label" underlineClass="common-line" inputClass="common-username-input"/>
-                <mu-text-field label="Password" hintText="" type="password" labelFloat underlineFocusClass="common-focus-line" labelFocusClass="common-focus-label" labelClass="common-label" underlineClass="common-line" inputClass="common-password-input"/>
-                <mu-flat-button label="Sign In" class="flat-button" labelClass="registerbtn" color="#000" rippleOpacity=".7" rippleColor="#fff" @click="goToChatRoom"/>
+                <mu-text-field v-model="user" label="Username" hintText="" type="text" labelFloat underlineFocusClass="common-focus-line" labelFocusClass="common-focus-label" labelClass="common-label" underlineClass="common-line" inputClass="common-username-input"/>
+                <mu-text-field v-model="password" label="Password" hintText="" type="password" labelFloat underlineFocusClass="common-focus-line" labelFocusClass="common-focus-label" labelClass="common-label" underlineClass="common-line" inputClass="common-password-input"/>
+                <mu-flat-button label="Sign In" class="flat-button" labelClass="registerbtn" color="#000" rippleOpacity=".7" rippleColor="#fff" @click="userLogin"/>
             </div>
         </div>
+        <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopup" @hide="goToChatroom">
+            {{loginSign?'Login Success！':'Fail to login, please try again.'}}
+        </mu-popup>
     </div>
 </template>
 
 <script>
+import md5 from 'md5'
 export default {
     data(){
         return {
-            togglePopup:false
+            togglePopup:false,
+            user:'',
+            password:'',
+            // popup muse-ui
+            topPopup:false,
+            // 作为跳转条件以及文字显示条件
+            loginSign:false
         }
     },
     props:['message'],
@@ -31,6 +41,13 @@ export default {
             if(this.message==true){
                 this.togglePopup=true
             }
+        },
+        topPopup(val){
+            if(val){
+                setTimeout(() => {
+                    this.topPopup=false
+                },2000)
+            }
         }
     },
     methods:{
@@ -39,8 +56,43 @@ export default {
             // 同时通过emit触发changeStatus事件，父组件监听后改变message
             this.$emit('changeStatus')
         },
-        goToChatRoom(){
-            this.$router.push({path:'/Chatroom'})
+        userLogin(){
+            if(!this.user||!this.password){
+                this.loginSign=false
+                this.topPopup=true
+            }
+            else{
+                let data={
+                    user_temp:this.user,
+                    password:md5(this.password)
+                }
+                this.axios.post('/auth/login',data)
+                    .then(res => {
+                        if(res.data.success){
+                            // 成功的话服务端返回token给客户端
+                            localStorage.setItem('token',res.data.token)
+                            this.loginSign=true
+                            this.topPopup=true
+                        }
+                        else{
+                            this.loginSign=false
+                            this.topPopup=true
+                            // 一旦登录失败便清空token
+                            localStorage.setItem('token',null)
+                        }
+                    })
+            }
+        },
+        goToChatroom(){
+            if(this.topPopup){
+                this.$router.push({
+                    path:'/Chatroom'
+                })
+            }
+            else{
+                this.user=''
+                this.password=''
+            }
         }
     }
 }
@@ -133,5 +185,17 @@ export default {
 .flat-button{
     position: relative;
     top:15px;
+}
+/*muse-ui popup*/
+.demo-popup-top {
+    font-family: 'Open Sans','Avenir', Helvetica, Arial, sans-serif;
+    width: 100%;
+    opacity: .7;
+    height: 44px;
+    line-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 375px;
 }
 </style>

@@ -14,6 +14,16 @@ const insetUser=async (user,password) => {
     return true
 }
 
+const getUserByName=async user => {
+    const info=await User.findOne({
+        where:{
+            user_name:user
+        }
+    })
+    return info
+}
+
 export default{
-    insetUser
+    insetUser,
+    getUserByName
 }
