@@ -4,25 +4,49 @@
             <span id="header-title">WELCOME TO JOIN US<br>CHATTING FREELY AND ENJOY THE MOMENT</span>
         </header>
         <section>
-            <mu-text-field label="Username" hintText="" type="text" labelFloat underlineFocusClass="focus-line" labelFocusClass="focus-label" labelClass="label" underlineClass="line" :inputClass="{username_input_change:usernameIsBlur,username_input:usernameIsFocus}" @blur="blurNameColor" @focus="focusNameColor"/>
-            <mu-text-field label="Password" hintText="" type="password" labelFloat underlineFocusClass="focus-line" labelFocusClass="focus-label" labelClass="label" underlineClass="line" :inputClass="{password_input_change:passwdIsBlur,password_input:passwdIsFocus}" @blur="blurPasswdColor" @focus="focusPasswdColor"/>
-            <mu-flat-button label="Sign Up" class="demo-flat-button" labelClass="registerbtn" color="#fff" rippleOpacity=".5" rippleColor="#fff"/>
+            <mu-text-field label="Username" hintText="" type="text" labelFloat underlineFocusClass="focus-line" labelFocusClass="focus-label" labelClass="label" underlineClass="line" :inputClass="{username_input_change:usernameIsBlur,username_input:usernameIsFocus}" @blur="blurNameColor" @focus="focusNameColor" v-model="user"/>
+            <mu-text-field label="Password" hintText="" type="password" labelFloat underlineFocusClass="focus-line" labelFocusClass="focus-label" labelClass="label" underlineClass="line" :inputClass="{password_input_change:passwdIsBlur,password_input:passwdIsFocus}" @blur="blurPasswdColor" @focus="focusPasswdColor" v-model="password"/>
+            <mu-flat-button @click="register" label="Sign Up" class="demo-flat-button" labelClass="registerbtn" color="#fff" rippleColor="#fff"/>
         </section>
+        <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopup">Fail To Register！</mu-popup>
     </div>
 </template>
 
 <script>
+import md5 from 'md5'
 export default {
     data() {
         return {
+                user:'',
+                password:'',
                 usernameIsFocus:true,
                 passwdIsFocus:true,
                 usernameIsBlur:false,
                 passwdIsBlur:false,
-                disabled:true
+                disabled:true,
+                // popup
+                topPopup:false
         }
     },
     methods:{
+        register(){
+            let data={
+                user_temp:this.user,
+                password:md5(this.password)
+            }
+            this.axios.post('auth/register',data)
+                .then(res => {
+                    console.log(res.data)
+                    if(res.data.success){
+                        this.$router.push({
+                            path:'/'
+                        })
+                    }
+                    else{
+                        this.topPopup=true
+                    }
+                })
+        },
         blurNameColor(){
             this.usernameIsBlur=true
             this.usernameIsFocus=false
@@ -38,6 +62,15 @@ export default {
         focusPasswdColor(){
             this.passwdIsBlur=false
             this.passwdIsFocus=true
+        }
+    },
+    watch:{
+        topPopup(val){
+            if(val){
+                setTimeout(() => {
+                    this.topPopup=false
+                },2000)
+            }
         }
     }
 }
@@ -102,5 +135,16 @@ export default {
 .demo-flat-button{
     position: relative;
     top:15px;
+}
+/*popup*/
+.demo-popup-top {
+  width: 100%;
+  opacity: .8;
+  height: 48px;
+  line-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 375px;
 }
 </style>
