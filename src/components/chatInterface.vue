@@ -7,12 +7,12 @@
         <div class="message-input">
             <div class="send-emoji">
                 <!-- icon tag_faces -->
-                <mu-icon value="tag_faces" color="gray" size="24"/>
+                <mu-icon value="tag_faces" color="gray" :size="size"/>
             </div>
             <input type="text" class="typing" placeholder="Type something here...">
             <div class="send-img">
                 <!-- icon image -->
-                <mu-icon value="image" color="gray" size="24"/>
+                <mu-icon value="image" color="gray" :size="size"/>
             </div>
         </div>
     </div>
@@ -23,7 +23,8 @@ export default {
 
     data () {
         return {
-
+            // muse-ui 类型警告
+            size:24
         }
     }
 }

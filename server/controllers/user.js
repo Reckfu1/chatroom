@@ -2,6 +2,11 @@ import user from '../models/user.js'
 import md5 from 'md5'
 import jwt from 'jsonwebtoken'
 
+// const register=User.insetUser(user_temp,md5(password))
+// console.log(register)
+// 注意，上面这种写法是不行的，因为这是个异步IO操作，register得到的是一个Promise对象，因此使用async/await
+// 再注意，async函数无论有无返回值，返回的永远是一个Promise对象
+
 const registerAccount=async ctx => {
     // koa-bodyparser已经把数据解析到ctx.request.body中
     const {user_temp,password}=ctx.request.body
@@ -71,7 +76,7 @@ const verifyAccount=async ctx => {
     // 在数据库查询用户，并验证密码
     const findUser=await user.getUserByName(verifyInfo.name)
     if(findUser!=null){
-        if(findUser.password==verifyInfo.password){
+        if(findUser.user_password==verifyInfo.password){
             ctx.body={
                 verify:true
             }

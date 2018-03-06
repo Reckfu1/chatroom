@@ -11,7 +11,7 @@
             <div class="wrap-right">
                 <mu-text-field v-model="user" label="Username" hintText="" type="text" labelFloat underlineFocusClass="common-focus-line" labelFocusClass="common-focus-label" labelClass="common-label" underlineClass="common-line" inputClass="common-username-input"/>
                 <mu-text-field v-model="password" label="Password" hintText="" type="password" labelFloat underlineFocusClass="common-focus-line" labelFocusClass="common-focus-label" labelClass="common-label" underlineClass="common-line" inputClass="common-password-input"/>
-                <mu-flat-button label="Sign In" class="flat-button" labelClass="registerbtn" color="#000" rippleOpacity=".7" rippleColor="#fff" @click="userLogin"/>
+                <mu-flat-button label="Sign In" class="flat-button" labelClass="registerbtn" color="#000" :rippleOpacity="rippleOpacity" rippleColor="#fff" @click="userLogin"/>
             </div>
         </div>
         <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopup" @hide="goToChatroom">
@@ -31,7 +31,10 @@ export default {
             // popup muse-ui
             topPopup:false,
             // 作为跳转条件以及文字显示条件
-            loginSign:false
+            loginSign:false,
+            // muse-ui检查类型使得控制台有警告 解决
+            rippleOpacity:.7
+
         }
     },
     props:['message'],
@@ -53,6 +56,9 @@ export default {
     methods:{
         hidePopup(){
             this.togglePopup=false
+            //清空输入框的信息
+            this.user=''
+            this.password=''
             // 同时通过emit触发changeStatus事件，父组件监听后改变message
             this.$emit('changeStatus')
         },
@@ -73,6 +79,7 @@ export default {
                             localStorage.setItem('token',res.data.token)
                             this.loginSign=true
                             this.topPopup=true
+                            // console.log(`status:${this.loginSign}`)
                         }
                         else{
                             this.loginSign=false
@@ -84,10 +91,12 @@ export default {
             }
         },
         goToChatroom(){
-            if(this.topPopup){
+            // console.log(`status:${this.loginSign}`)
+            if(this.loginSign){
                 this.$router.push({
                     path:'/Chatroom'
                 })
+                console.log('after')
             }
             else{
                 this.user=''
