@@ -5,20 +5,38 @@ import jwt from 'jsonwebtoken'
 // const register=User.insetUser(user_temp,md5(password))
 // console.log(register)
 // 注意，上面这种写法是不行的，因为这是个异步IO操作，register得到的是一个Promise对象，因此使用async/await
-// 再注意，async函数无论有无返回值，返回的永远是一个Promise对象
+// 再注意，async函数无论有无返回值，返回的都会是一个被resolve的Promise对象，无返回值：Promise.resolve(undefined)
+// async function testAsync() {
+//     return "hello async"
+// }
+// const result = testAsync()
+// console.log(result) 
 
 const registerAccount=async ctx => {
     // koa-bodyparser已经把数据解析到ctx.request.body中
     const {user_temp,password}=ctx.request.body
-    const register=await user.insetUser(user_temp,md5(password))
-    if(register){
+    // 先查询数据库有没有同名
+    const isDifferent=await user.getUserByName(user_temp)
+    // 用户名已存在
+    if(isDifferent!=null){ 
         ctx.body={
-            success:true
+            success:false,
+            mes:'user has already been existed',
+            sign:true
         }
     }
-    else {
-        ctx.body={
-            success:false
+    // 注册用户
+    else{
+        const register=await user.insetUser(user_temp,md5(password))
+        if(register){
+            ctx.body={
+                success:true
+            }
+        }
+        else {
+            ctx.body={
+                success:false
+            }
         }
     }
 }
@@ -26,6 +44,7 @@ const registerAccount=async ctx => {
 const loginAccount=async ctx => {
     const {user_temp,password}=ctx.request.body
     const result=await user.getUserByName(user_temp)
+    console.log(`result is:${result}`)
 
     if(result!=null){
         // 首先验证密码是否错误
@@ -52,7 +71,7 @@ const loginAccount=async ctx => {
     else{
         ctx.body={
             success:false,
-            mes:'user doesn\'t exit'
+            mes:'user doesn\'t exist'
         }
     }
 }

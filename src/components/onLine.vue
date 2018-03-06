@@ -131,6 +131,7 @@ export default {
     position: relative;
     left: 10px;
     width:120px;
+    font-size: 12px;
     /*超出文字显示省略号*/
     text-overflow: ellipsis;
     white-space: nowrap;

@@ -6,10 +6,11 @@
         <section>
             <mu-text-field label="Username" hintText="" type="text" labelFloat underlineFocusClass="focus-line" labelFocusClass="focus-label" labelClass="label" underlineClass="line" :inputClass="{username_input_change:usernameIsBlur,username_input:usernameIsFocus}" @blur="blurNameColor" @focus="focusNameColor" v-model="user"/>
             <mu-text-field label="Password" hintText="" type="password" labelFloat underlineFocusClass="focus-line" labelFocusClass="focus-label" labelClass="label" underlineClass="line" :inputClass="{password_input_change:passwdIsBlur,password_input:passwdIsFocus}" @blur="blurPasswdColor" @focus="focusPasswdColor" v-model="password"/>
-            <mu-flat-button @click="userRegister" label="Sign Up" class="demo-flat-button" labelClass="registerbtn" color="#fff" rippleColor="#fff"/>
+            <mu-flat-button @click="userRegister" label="Sign Up" class="demo-flat-button" labelClass="registerbtn" color="#fff" rippleColor="#fff" :rippleOpacity="rippleOpacity"/>
         </section>
         <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopup" @hide="backToIndex">
-            {{registerSign?'Register Success！':'Fail to register, please try again.'}}
+            <!-- {{registerSign?'Register Success！':'Fail to register, please try again.'}} -->
+            {{tips}}
         </mu-popup>
     </div>
 </template>
@@ -26,16 +27,29 @@ export default {
                 usernameIsBlur:false,
                 passwdIsBlur:false,
                 disabled:true,
-                // popup
+                // popup muse-ui
                 topPopup:false,
                 // 作为跳转条件以及文字显示条件
-                registerSign:false 
+                registerSign:false,
+                // 文字显示
+                tips:'',
+                // 文字数组
+                tipsArr:[
+                    'register success!',
+                    'username has already been existed.',
+                    'username or password can not be empty.',
+                    'fail to register, please try again.'
+                ],
+                // muse-ui 类型警告
+                rippleOpacity:.7
         }
     },
     methods:{
         userRegister(){
+            console.log(this)
             // 若其中一项为空
             if(!this.user||!this.password){
+                this.tips=this.tipsArr[2]
                 this.registerSign=false
                 this.topPopup=true
             }
@@ -45,12 +59,22 @@ export default {
                     password:md5(this.password)
                 }
                 this.axios.post('auth/register',data)
-                    .then(res => {                     
+                    .then(res => {  
                         if(res.data.success){
+                            this.tips=this.tipsArr[0]
                             this.registerSign=true
                             this.topPopup=true
                         }
                         else{
+                            // 若用户名已存在
+                            if(res.data.sign){
+                                this.tips=this.tipsArr[1]
+                                this.registerSign=false
+                                this.topPopup=true
+                                return 
+                            }
+                            // 其他错误引起注册失败
+                            this.tips=this.tipsArr[3]
                             this.registerSign=false
                             this.topPopup=true
                         }
