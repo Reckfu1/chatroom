@@ -4,8 +4,8 @@
             <div class="person-detail">
                 <img class="person-img" src="../assets/me.jpg"></img>
                 <div class="person-profile">
-                    <div class="person-name">Zeki GhuliamZeki Ghuliam</div>
-                    <div class="person-info">Your ProfessionYour Profession</div>
+                    <div class="person-name">Zeki Ghuliam</div>
+                    <div class="person-info">前端工程师</div>
                 </div>
             </div>
             <div class="person-options">
@@ -65,19 +65,20 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 .person-img{
     height: 38px;
     width:38px;
 }
 .person-profile{
-    height: 46px;
+    height: 40px;
     width:60%;
     /*background-color: red;*/
     color:#fff;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: space-between;
     position: relative;
     left: 8px;
 }

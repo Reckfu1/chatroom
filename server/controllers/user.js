@@ -113,8 +113,15 @@ const verifyAccount=async ctx => {
     }
 }
 
+const uploadImg=async ctx => {
+    ctx.body={
+        mes:'upload success'
+    }
+}
+
 export default{
     registerAccount,
     loginAccount,
-    verifyAccount
+    verifyAccount,
+    uploadImg
 }

@@ -5,7 +5,7 @@
                 <div class="wrap-left-content">
                     Hello<br>World.
                 </div>
-                <span>Friends, Welcome Back</span>
+                <span style="letter-spacing:1px">Friends, Welcome Back</span>
                 <div class="wrap-left-mask"></div>
             </div>
             <div class="wrap-right">

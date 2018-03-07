@@ -5,6 +5,15 @@
             <chatInterface></chatInterface>
             <onLine></onLine>
         </div>
+        <img :src="src" alt="" style="width:38px;height:38px;background-color:white">
+        <vue-core-image-upload
+          style="width:100px;height:20px;background-color:red;cursor:pointer;text-align:center"
+          :crop="false"
+          @imageuploaded="upload"
+          :max-file-size="5242880"
+          url="http://localhost:3000/auth/upload">
+          上传图片
+        </vue-core-image-upload>
     </div>
 </template>
 
@@ -13,16 +22,24 @@
 import chatList from '@/components/chatList'
 import chatInterface from '@/components/chatInterface'
 import onLine from '@/components/onLine'
+
+import VueCoreImageUpload  from 'vue-core-image-upload';
 export default {
     data() {
         return {
-
+            src:"https://i.loli.net/2018/03/08/5aa02f6aa6cc0.jpg"
         }
     },
     components: {
         chatList,
         chatInterface,
-        onLine
+        onLine,
+        'vue-core-image-upload': VueCoreImageUpload
+    },
+    methods:{
+        upload(res){
+            console.log(res.data.mes)
+        }
     }
 }
 </script>

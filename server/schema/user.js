@@ -19,7 +19,12 @@ export default function(sequelize, DataTypes) {
       defaultValue: ''
     },
     user_profession: {
-      type: DataTypes.CHAR(128),
+      type: DataTypes.CHAR(255),
+      allowNull: true,
+      defaultValue: ''
+    },
+    avatar_url: {
+      type: DataTypes.CHAR(255),
       allowNull: true,
       defaultValue: ''
     }
