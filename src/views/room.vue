@@ -11,7 +11,7 @@
           :crop="false"
           @imageuploaded="upload"
           :max-file-size="5242880"
-          url="http://localhost:3000/auth/upload">
+          url="/auth/upload">
           上传图片
         </vue-core-image-upload>
     </div>
@@ -23,7 +23,7 @@ import chatList from '@/components/chatList'
 import chatInterface from '@/components/chatInterface'
 import onLine from '@/components/onLine'
 
-import VueCoreImageUpload  from 'vue-core-image-upload';
+import VueCoreImageUpload from '../../node_modules/vue-core-image-upload/src/vue-core-image-upload';
 export default {
     data() {
         return {
@@ -38,7 +38,7 @@ export default {
     },
     methods:{
         upload(res){
-            console.log(res.data.mes)
+            console.log(res.mes)
         }
     }
 }
