@@ -1,5 +1,5 @@
 <template>
-    <div id="popup" @click.self="hidePopup" v-if="togglePopup">
+    <div id="popup" @click.self="hidePopup" v-if="toggleLoginPopup">
         <div class="login-wrapper">
             <div class="wrap-left">
                 <div class="wrap-left-content">
@@ -25,7 +25,7 @@ import md5 from 'md5'
 export default {
     data(){
         return {
-            togglePopup:false,
+            toggleLoginPopup:false,
             user:'',
             password:'',
             // popup muse-ui
@@ -41,10 +41,11 @@ export default {
     // 通过props接收来自父组件的popup状态，再通过观察模式动态改变popup的显示
     watch:{
         message(){
-            if(this.message==true){
-                this.togglePopup=true
+            if(this.message){
+                this.toggleLoginPopup=true
             }
         },
+        // 这个是muse-ui的popup
         topPopup(val){
             if(val){
                 setTimeout(() => {
@@ -55,12 +56,12 @@ export default {
     },
     methods:{
         hidePopup(){
-            this.togglePopup=false
+            this.toggleLoginPopup=false
             //清空输入框的信息
             this.user=''
             this.password=''
             // 同时通过emit触发changeStatus事件，父组件监听后改变message
-            this.$emit('changeStatus')
+            this.$emit('listenInStatus')
         },
         userLogin(){
             if(!this.user||!this.password){

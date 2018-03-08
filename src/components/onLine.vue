@@ -10,7 +10,7 @@
             </div>
             <div class="person-options">
                 <!-- sort / format align left/menu -->
-                <mu-icon value="sort" :size="28" color="#fff"/>
+                <mu-icon value="sort" :size="28" color="#fff" @click="modifyInfo" style="user-select:none"/>
             </div>
         </div>
         <div class="online-people">
@@ -24,12 +24,29 @@
                 </div>
             </div>
         </div>
+        <user-info :message="userInfoPopup" @listenInUserInfoStatus="changeStatus" class="animated fadeIn"></user-info>
     </div>
 </template>
 
 <script>
+import userInfo from './userInfo'
 export default {
-
+    data(){
+        return {
+            userInfoPopup:false
+        }
+    },
+    methods:{
+        modifyInfo(){
+            this.userInfoPopup=true
+        },
+        changeStatus(){
+            this.userInfoPopup=false
+        }
+    },
+    components:{
+        'user-info':userInfo
+    }    
 }
 </script>
 

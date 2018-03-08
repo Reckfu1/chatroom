@@ -18,13 +18,12 @@
             <span>HEART TO HEART TALK SHOW IS THE SOUL</span>
             <span>推心置腹的谈话就是心灵的展示</span>
         </section>  
-        
-            <popup :message="mes" @changeStatus="test" class="animated fadeIn"></popup>
+        <login-popup :message="mes" @listenInStatus="changeMes" class="animated fadeIn"></login-popup>
     </div>
 </template>
 
 <script>
-import popup from '@/components/popup'
+import loginPopup from '@/components/loginPopup'
 export default {
     data() {
         return {
@@ -49,12 +48,13 @@ export default {
         submitStatus(){
             this.mes=true
         },
-        test(){
+        changeMes(){
             this.mes=false
         }
     },
     components:{
-        popup
+        // loginPopup
+        'login-popup':loginPopup
     }
 }
 </script>
