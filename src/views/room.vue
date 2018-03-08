@@ -11,9 +11,11 @@
           :crop="false"
           @imageuploaded="upload"
           :max-file-size="5242880"
-          url="/auth/upload">
+          inputOfFile="smfile"
+          url="/api/upload?name=smfile">
           上传图片
         </vue-core-image-upload>
+        <!-- 因为sm.ms需要指定上传表单smfile字段(表单名称)，所以inputOfFile设置成smfile-->
     </div>
 </template>
 
@@ -22,8 +24,9 @@
 import chatList from '@/components/chatList'
 import chatInterface from '@/components/chatInterface'
 import onLine from '@/components/onLine'
+// 不能直接import组件，组件本身有问题
+import VueCoreImageUpload from '../../node_modules/vue-core-image-upload/src/vue-core-image-upload'
 
-import VueCoreImageUpload from '../../node_modules/vue-core-image-upload/src/vue-core-image-upload';
 export default {
     data() {
         return {
@@ -38,7 +41,7 @@ export default {
     },
     methods:{
         upload(res){
-            console.log(res.mes)
+            if(res.code=='success') this.src=res.data.url
         }
     }
 }

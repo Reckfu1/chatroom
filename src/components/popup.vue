@@ -96,7 +96,7 @@ export default {
                 this.$router.push({
                     path:'/Chatroom'
                 })
-                console.log('after')
+                console.log('enter chatroom')
             }
             else{
                 this.user=''
