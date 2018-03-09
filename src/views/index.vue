@@ -17,7 +17,7 @@
             <!-- Heart to heart conversation reveals one's soul.... -->
             <span>HEART TO HEART TALK SHOW IS THE SOUL</span>
             <span>推心置腹的谈话就是心灵的展示</span>
-        </section>  
+        </section>
         <login-popup :message="mes" @listenInStatus="changeMes" class="animated fadeIn"></login-popup>
     </div>
 </template>
@@ -44,7 +44,9 @@ export default {
         goToRegister(){
             this.$router.push({path:'/Register'})
         },
-        // Login
+        // 修改mes状态，然后通过props传给loginPopup组件，loginPopup组件利用watch监听mes变化，如果为真就显示登陆框
+        // 隐藏利用click.self，点击登录框外的区域触发listenInStatus，loginPopup监听listenInStatus，修改mes，完成隐藏
+        // click.self(只当在 event.target 是当前元素自身时触发处理函数)
         submitStatus(){
             this.mes=true
         },

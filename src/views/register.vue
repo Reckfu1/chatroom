@@ -177,6 +177,7 @@ export default {
 .registerbtn{
     font-size: 16px;
     font-weight: 300;
+    /*museui设置是大写的，改为自由设置*/
     text-transform: none;
 }
 .demo-flat-button{
