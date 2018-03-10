@@ -27,6 +27,16 @@ export default function(sequelize, DataTypes) {
       type: DataTypes.CHAR(255),
       allowNull: true,
       defaultValue: ''
+    },
+    user_hobby: {
+      type: DataTypes.CHAR(50),
+      allowNull: true,
+      defaultValue: ''
+    },
+    user_sex: {
+      type: DataTypes.CHAR(50),
+      allowNull: true,
+      defaultValue: ''
     }
   }, {
     tableName: 'user'

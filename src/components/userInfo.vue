@@ -3,22 +3,40 @@
         <section>
             <div class="modify-box">
                 <div class="avatar-box">
-                    <img src="../assets/me.jpg" alt="">
+                    <!-- <img :src="src" alt=""> -->
+                    <!-- 因为sm.ms需要指定上传表单smfile字段(表单名称)，所以inputOfFile设置成smfile-->
+                    <vue-core-image-upload
+                        style="width:50px;height:50px;cursor:pointer"
+                        :crop="false"
+                        @imageuploaded="upload"
+                        :max-file-size="5242880"
+                        inputOfFile="smfile"
+                        url="/api/upload?name=smfile">
+                        <img :src="src" alt="">
+                    </vue-core-image-upload>
                 </div>
-                <mu-text-field labelClass="info-common-label" class="info-common-class" underlineFocusClass="info-common-focus-underline" labelFocusClass="info-common-focus-label" label="sex" labelFloat/>
-                <mu-text-field labelClass="info-common-label" class="info-common-class" underlineFocusClass="info-common-focus-underline" labelFocusClass="info-common-focus-label" label="profession" labelFloat/>
-                <mu-text-field labelClass="info-common-label" class="info-common-class" underlineFocusClass="info-common-focus-underline" labelFocusClass="info-common-focus-label" label="hobby" labelFloat/>
-                <mu-flat-button label="Confirm" color="#000" labelClass="info-flat-btn"/>
+                <mu-text-field labelClass="info-common-label" class="info-common-class" underlineFocusClass="info-common-focus-underline" labelFocusClass="info-common-focus-label" label="Sex" labelFloat v-model="value.sex_value"/>
+                <mu-text-field labelClass="info-common-label" class="info-common-class" underlineFocusClass="info-common-focus-underline" labelFocusClass="info-common-focus-label" label="Profession" labelFloat v-model="value.pro_value"/>
+                <mu-text-field labelClass="info-common-label" class="info-common-class" underlineFocusClass="info-common-focus-underline" labelFocusClass="info-common-focus-label" label="Hobby" labelFloat v-model="value.hobby_value"/>
+                <mu-flat-button label="Confirm" color="#000" labelClass="info-flat-btn" @click="confirmModify"/>
             </div>
         </section>
     </div>
 </template>
 
 <script>
+// 不能直接import组件，组件本身有问题
+import VueCoreImageUpload from '../../node_modules/vue-core-image-upload/src/vue-core-image-upload'
 export default {
     data(){
         return {
-            toggleInfoPopup:false
+            toggleInfoPopup:false,
+            src:"https://i.loli.net/2018/03/08/5aa02f6aa6cc0.jpg",
+            value:{
+                sex_value:'',
+                pro_value:'',
+                hobby_value:''
+            }
         }
     },
     props:['message'], 
@@ -26,6 +44,18 @@ export default {
         hideUserInfo(){
             this.toggleInfoPopup=false
             this.$emit('listenInUserInfoStatus')
+        },
+        upload(res){
+            if(res.code=='success') this.src=res.data.url
+        },
+        confirmModify(){
+            this.axios.post('/auth/modifyInfo',{
+                value:this.value,
+                token:localStorage.getItem("token")
+            })
+            // this.value.sex_value=
+            // this.value.pro_value=
+            // this.value.hobby_value=
         }
     },
     watch:{
@@ -34,6 +64,9 @@ export default {
                 this.toggleInfoPopup=true
             }
         }
+    },
+    components:{
+        'vue-core-image-upload': VueCoreImageUpload
     }
 }
 </script>

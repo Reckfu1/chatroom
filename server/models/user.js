@@ -23,7 +23,22 @@ const getUserByName=async user => {
     return info
 }
 
+const modifyUserInfo=async (name,value) => {
+    const temp=await User.update({
+        user_sex:value.sex_value,
+        user_profession:value.pro_value,
+        user_hobby:value.hobby_value
+    },{
+        where:{
+            user_name:name
+        }
+    })
+
+    return true
+}
+
 export default{
     insetUser,
-    getUserByName
+    getUserByName,
+    modifyUserInfo
 }

@@ -52,6 +52,7 @@ export default {
 }
 .room-name{
     /*color:gray;*/
+    user-select: none;
 }
 /*section*/
 .chat-content{

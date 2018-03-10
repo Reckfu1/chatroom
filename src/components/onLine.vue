@@ -18,7 +18,7 @@
             <div class="online-detail">
                 <img src="../assets/me.jpg">
                 <div class="people-wrapper">
-                    <span class="people-name">Kanye WestKanye WestKanye W</span>
+                    <span class="people-name">Kanye WestKa</span>
                     <!-- brightness 1 -->
                     <mu-icon value="brightness_1" :size="12" color="green" class="online-sign"/>
                 </div>
@@ -84,8 +84,9 @@ export default {
     cursor: pointer;
 }
 .person-img{
-    height: 38px;
-    width:38px;
+    height: 45px;
+    width:45px;
+    border-radius: 50%;
 }
 .person-profile{
     height: 40px;
@@ -103,6 +104,9 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+}
+.person-name,.person-info{
+    user-select: none;
 }
 .person-name{
     font-weight: bold;
@@ -153,9 +157,12 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    user-select: none;
+    cursor: pointer;
 }
 .online-sign{
     position: relative;
     right:10px;
+    user-select: none;
 }
 </style>
