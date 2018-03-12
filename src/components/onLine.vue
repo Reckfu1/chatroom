@@ -35,10 +35,11 @@ export default {
             profession:''
         }
     },
+    props:['message'],
     methods:{
         // 这个userInfo组件的显示实现方法不同于loginPopup组件
         // 要利用一个中间事件来完成显示信息框，因为userInfo组件不在这里，而是在room.vue
-        // 所以点击后先触发middleEvent，然后在room.vue中的onLine组件(也就是此组件)里监听middleEvent，再修改信息框状态，完成显示
+        // onLine->room通过emit传递数据，room->userInfo通过props传递数据
         // onLine.vue -> room.vue -> userInfo.vue
         modifyInfo(){
             this.$emit('middleEvent')
@@ -56,6 +57,11 @@ export default {
                 this.profession=res.data.result.user_profession
             }
         })
+    },
+    watch:{
+        message(){
+            this.profession=this.message
+        }
     }
 }
 </script>

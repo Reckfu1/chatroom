@@ -3,9 +3,9 @@
         <div class="room-wrapper">
             <chatList></chatList>
             <chatInterface></chatInterface>
-            <onLine @middleEvent="realModify"></onLine>
+            <onLine @middleEvent="realModify" :message="professionVal"></onLine>
         </div>
-        <user-info :message="userInfoPopup" @listenInUserInfoStatus="changeStatus" class="animated fadeIn"></user-info>
+        <user-info :message="userInfoPopup" @listenInUserInfoStatus="changeStatus" class="animated fadeIn" @middleEventWatchPro="realWatchPro"></user-info>
     </div>
 </template>
 
@@ -20,7 +20,8 @@ import userInfo from '@/components/userInfo'
 export default {
     data() {
         return {
-            userInfoPopup:false
+            userInfoPopup:false,
+            professionVal:''
         }
     },
     components: {
@@ -35,6 +36,9 @@ export default {
         },
         changeStatus(){
             this.userInfoPopup=false
+        },
+        realWatchPro(val){
+            this.professionVal=val
         }
     }
 }

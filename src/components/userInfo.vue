@@ -55,6 +55,10 @@ export default {
             })
             .then(res => {
                 console.log('修改成功')
+                // 用户修改完毕后，online组件中profession也要改变，所以要监听
+                // 同样的，userInfo->room通过emit传递数据，room->onLine通过props传递数据
+                // 但是这次是userInfo.vue -> room.vue -> onLine.vue
+                this.$emit('middleEventWatchPro',this.value.pro_value)
             })
         }
     },
