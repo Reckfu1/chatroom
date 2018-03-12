@@ -49,14 +49,29 @@ export default {
             if(res.code=='success') this.src=res.data.url
         },
         confirmModify(){
-            this.axios.post('/auth/modifyInfo',{
+            this.axios.post('/auth/modify',{
                 value:this.value,
                 token:localStorage.getItem("token")
             })
-            // this.value.sex_value=
-            // this.value.pro_value=
-            // this.value.hobby_value=
+            .then(res => {
+                console.log('修改成功')
+            })
         }
+    },
+    mounted(){
+        // 获取信息(sex,profession,hobby)
+        // 如果用get，则必须发一次请求来获取用户id或者用户名才能获取其他数据，所以直接用post，传token，服务器解析token，返回数据
+        this.axios.post('/auth/getinfo',{
+            token:localStorage.getItem("token")
+        })
+        .then(res => {
+            if(res.data.get_userinfo){
+                let temp=res.data.result
+                this.value.sex_value=temp.user_sex
+                this.value.pro_value=temp.user_profession
+                this.value.hobby_value=temp.user_hobby
+            }
+        })
     },
     watch:{
         message(){

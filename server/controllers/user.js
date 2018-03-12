@@ -2,6 +2,23 @@ import user from '../models/user.js'
 import md5 from 'md5'
 import jwt from 'jsonwebtoken'
 
+// 封装验证函数
+// 除了方便，更重要的原因如下
+// 如果不封装，异步操作将会在jwt的回调箭头函数里面执行，使得函数名前要加async，不然await会是一个保留字
+// 但是如果加了async 客户端请求的时候会报404，但是接口却能正常访问，数据库也能发生更改
+const commonVerifyFunction=function(temp_token){
+    let temp_info
+    jwt.verify(temp_token,'chatroom',(err,decoded) => {
+        if(err){
+            return false
+        }
+        // 解析结果赋值给变量
+        temp_info=decoded
+    })
+    // 返回解析结果
+    return temp_info
+}
+
 // const register=User.insetUser(user_temp,md5(password))
 // console.log(register)
 // 注意，上面这种写法是不行的，因为这是个异步IO操作，register得到的是一个Promise对象，因此使用async/await
@@ -81,75 +98,58 @@ const loginAccount=async ctx => {
 // 验证token(客户端路由跳转)
 const verifyAccount=async ctx => {
     const {token}=ctx.request.body
-    let verifyInfo={}
 
     // 验证token，若有错误，返回false,如果正确，进行下一步验证
-    jwt.verify(token,'chatroom',(err,decoded) => {
-        if(err){
+    let result=commonVerifyFunction(token)
+    if(result){
+        ctx.body={
+            verify:true
+        }
+    }
+    else{
+        ctx.body={
+            verify:false
+        }
+    }
+}
+
+// 获取用户信息
+const getUserInfo=async ctx => {
+    const {token}=ctx.request.body
+    let info=commonVerifyFunction(token)
+    if(info){
+        let result=await user.getUserByName(info.name)
+        if(result){
             ctx.body={
-                verify:false
+                get_userinfo:true,
+                result
             }
         }
         else{
-            // 将token解析结果赋值给变量
-            verifyInfo=decoded
             ctx.body={
-                verify:true
+                get_userinfo:false
             }
         }
-    })
-
-    return verifyInfo
-    // const findUser=await user.getUserByName(verifyInfo.name)
-    // if(findUser!=null){
-    //     if(findUser.user_password==verifyInfo.password){
-    //         ctx.body={
-    //             verify:true
-    //         }
-    //     }
-    //     else{
-    //         ctx.body={
-    //             verify:false
-    //         }
-    //     }
-    // }
-    // else{
-    //     ctx.body={
-    //         verify:false
-    //     }
-    // }
+    }
 }
 
 // 验证用户并修改信息
 const modifyInfo=async ctx => {
     const {value,token}=ctx.request.body
-    let verifyInfo={}
-
-    // 这里箭头函数也加async的原因是箭头函数中有异步操作，函数名前要加async，不然await会是一个保留字 
-    jwt.verify(token,'chatroom',async (err,decoded) => {
-        // 验证不通过
-        if(err){
+    let info=commonVerifyFunction(token)
+    if(info){
+        const modify=await user.modifyUserInfo(info.name,value)
+        if(modify){
+            ctx.body={
+                modify_result:true
+            }
+        }
+        else{
             ctx.body={
                 modify_result:false
             }
         }
-        // 验证通过
-        else{
-            verifyInfo=decoded
-            console.log(`${verifyInfo.name} and ${value.sex_value} ${value.pro_value} ${value.hobby_value}`)
-            const modify=await user.modifyUserInfo(verifyInfo.name,value)
-            if(modify){
-                ctx.body={
-                    modify_result:true
-                }
-            }
-            else{
-                ctx.body={
-                    modify_result:false
-                }
-            }
-        }
-    })
+    }
 }
 
 // 上传图片
@@ -164,5 +164,6 @@ export default{
     loginAccount,
     verifyAccount,
     uploadImg,
-    modifyInfo
+    modifyInfo,
+    getUserInfo
 }

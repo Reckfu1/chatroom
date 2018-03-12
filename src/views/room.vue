@@ -36,7 +36,6 @@ export default {
         changeStatus(){
             this.userInfoPopup=false
         }
-
     }
 }
 </script>

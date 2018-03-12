@@ -4,8 +4,8 @@
             <div class="person-detail">
                 <img class="person-img" src="../assets/me.jpg"></img>
                 <div class="person-profile">
-                    <div class="person-name">Zeki Ghuliam</div>
-                    <div class="person-info">前端工程师</div>
+                    <div class="person-name">{{name}}</div>
+                    <div class="person-info">{{profession}}</div>
                 </div>
             </div>
             <div class="person-options">
@@ -31,7 +31,8 @@
 export default {
     data(){
         return {
-            
+            name:'',
+            profession:''
         }
     },
     methods:{
@@ -41,11 +42,21 @@ export default {
         // onLine.vue -> room.vue -> userInfo.vue
         modifyInfo(){
             this.$emit('middleEvent')
-        },
+        }
     },
-    components:{
-        
-    }    
+    // 必须用mounted，因为要用到this
+    mounted(){
+        // 获取用户名和职业
+        this.axios.post('/auth/getinfo',{
+            token:localStorage.getItem("token")
+        })
+        .then(res => {
+            if(res.data.get_userinfo){
+                this.name=res.data.result.user_name,
+                this.profession=res.data.result.user_profession
+            }
+        })
+    }
 }
 </script>
 
