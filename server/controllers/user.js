@@ -154,8 +154,20 @@ const modifyInfo=async ctx => {
 
 // 上传图片
 const uploadImg=async ctx => {
-    ctx.body={
-        mes:'upload success'
+    const {ava_url,token}=ctx.request.body
+    let info=commonVerifyFunction(token)
+    if(info){
+        const upload=await user.uploadImgUrl(info.name,ava_url)
+        if(upload){
+            ctx.body={
+                upload_result:true
+            }
+        }
+        else{
+            ctx.body={
+                modify_result:false
+            }
+        }
     }
 }
 

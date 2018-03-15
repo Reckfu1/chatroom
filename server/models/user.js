@@ -37,8 +37,21 @@ const modifyUserInfo=async (name,value) => {
     return true
 }
 
+const uploadImgUrl=async (name,url) => {
+    const temp=await User.update({
+        avatar_url:url
+    },{
+        where:{
+            user_name:name
+        }
+    })
+    
+    return true
+}
+
 export default{
     insetUser,
     getUserByName,
-    modifyUserInfo
+    modifyUserInfo,
+    uploadImgUrl
 }

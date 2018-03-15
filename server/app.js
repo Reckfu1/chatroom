@@ -6,18 +6,40 @@ import bodyparser from 'koa-bodyparser'
 
 import auth from './routes/auth.js'
 
+// 导入socketio模块
+import socket from 'socket.io'
+import http from 'http'
+
 const app=new koa()
 const router=koaRouter()
+
+// socket.io使用方法
+const server = http.createServer(app.callback())
+const io = new socket(server)
 
 app.use(bodyparser())
 app.use(json())
 
-app.use(async (ctx,next) => {
-    let start=new Date()
-    await next()
-    let ms=new Date()-start
-    console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
+io.on('connection',socket => {
+    console.log('a user connected')
+    socket.on('chat message',obj => {
+        // console.log(`message is: ${msg}`)
+        // socket.broadcast.emit('chat message',obj)
+        io.emit('chat message',obj)
+    })
+    socket.on('disconnect',() => {
+
+        console.log('user disconnected')
+    })
 })
+
+
+// app.use(async (ctx,next) => {
+//     let start=new Date()
+//     await next()
+//     let ms=new Date()-start
+//     console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
+// })
 
 
 app.on('error',(err,ctx) => {
@@ -30,6 +52,6 @@ router.use('/auth',auth.routes())
 // 将路由规则挂载到Koa上
 app.use(router.routes())
 
-app.listen(3000,() => console.log('Koa is listening in 3000...'))
+server.listen(3000,() => console.log('Koa is listening in 3000...'))
 
 export default app

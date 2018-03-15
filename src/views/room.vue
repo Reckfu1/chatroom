@@ -15,8 +15,6 @@ import chatList from '@/components/chatList'
 import chatInterface from '@/components/chatInterface'
 import onLine from '@/components/onLine'
 import userInfo from '@/components/userInfo'
-
-
 export default {
     data() {
         return {

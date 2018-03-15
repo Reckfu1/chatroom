@@ -2,7 +2,7 @@
     <div id="online">
         <div class="person">
             <div class="person-detail">
-                <img class="person-img" src="../assets/me.jpg"></img>
+                <img class="person-img" :src="src"></img>
                 <div class="person-profile">
                     <div class="person-name">{{name}}</div>
                     <div class="person-info">{{profession}}</div>
@@ -32,7 +32,8 @@ export default {
     data(){
         return {
             name:'',
-            profession:''
+            profession:'',
+            src:'https://i.loli.net/2018/03/08/5aa02f6aa6cc0.jpg'
         }
     },
     props:['message'],
@@ -47,14 +48,15 @@ export default {
     },
     // 必须用mounted，因为要用到this
     mounted(){
-        // 获取用户名和职业
+        // 获取用户 职业 头像地址
         this.axios.post('/auth/getinfo',{
             token:localStorage.getItem("token")
         })
         .then(res => {
             if(res.data.get_userinfo){
-                this.name=res.data.result.user_name,
+                this.name=res.data.result.user_name
                 this.profession=res.data.result.user_profession
+                if(res.data.result.avatar_url) this.src=res.data.result.avatar_url
             }
         })
     },

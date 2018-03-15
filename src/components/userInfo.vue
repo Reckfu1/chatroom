@@ -46,7 +46,14 @@ export default {
             this.$emit('listenInUserInfoStatus')
         },
         upload(res){
-            if(res.code=='success') this.src=res.data.url
+            if(res.code=='success'){
+                this.src=res.data.url
+                // 将头像存在数据库,上传头像不需要按确定按钮
+                this.axios.post('/auth/upload',{
+                    ava_url:res.data.url,
+                    token:localStorage.getItem("token")
+                })
+            }
         },
         confirmModify(){
             this.axios.post('/auth/modify',{
