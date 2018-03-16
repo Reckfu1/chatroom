@@ -1,9 +1,9 @@
 <template>
     <div id="interface">
         <div class="room-top">
-            <div class="room-name">Discuss UI/UX(32)</div>
+            <div class="room-name">Chatroom({{count}})</div>
         </div>
-        <div class="chat-content">
+        <div class="chat-content" ref='chat'>
             <div class="content-item" v-for="item in content">
                 <img :src="item.avatar" alt="">
                 <div class="content-box">
@@ -13,22 +13,28 @@
             </div>
         </div>
         <div class="message-input">
-            <div class="send-emoji">
-                <!-- icon tag_faces -->
-                <mu-icon value="tag_faces" color="gray" :size="size"/>
+            <div class="send-emoji" @click='showEmoji=!showEmoji' ref='btn'>
+                <mu-icon value="tag_faces" color="gray" :size="size" style="pointer-events:none;user-select:none"/>
             </div>
             <input type="text" class="typing" placeholder="Type something here..." v-model="value" @keyup.enter="send">
-            <div class="send-img">
-                <!-- icon image -->
-                <mu-icon value="image" color="gray" :size="size"/>
+            <!-- <span style="display:none" ref='edit'></span> -->
+            <div class="send-msg">
+                <mu-icon value="arrow_upward" color="gray" :size="size" @click="send"/>
             </div>
         </div>
+        <vue-emoji
+            v-show='showEmoji'
+            ref='emoji'
+            :unicode='true'
+            @select='handleSelect'
+            @hide='handleHide'
+        ></vue-emoji>
     </div>
 </template>
 
 <script>
-import io from 'socket.io-client'
-const socket=io('http://localhost:3000')
+import 'rui-vue-emoji/dist/vue-emoji.css'
+import emoji from 'rui-vue-emoji'
 export default {
     data () {
         return {
@@ -38,17 +44,51 @@ export default {
             obj:{
                 message:'',
                 self:'',
-                avatar:'https://i.loli.net/2018/03/08/5aa02f6aa6cc0.jpg'
+                avatar:''
             },
-            content:[]
+            content:[],
+            count:0,
+            // emoji
+            showEmoji:false
         }
     },
     methods:{
         // 发送
         send(){
+            if(this.value=='') return
             this.obj.message=this.value
-            socket.emit('chat message',this.obj)
-            this.value=''
+            // 为了用户在修改完头像之后实时更新聊天内容中用户的头像，每次发信息都会请求一遍用户的最新头像地址
+            this.axios.post('/auth/getinfo',{
+                token:localStorage.getItem("token")
+            })
+            .then(res => {
+                this.obj.avatar=res.data.result.avatar_url
+                // 发送对象是想知道谁是发送人
+                this.socket.emit('chat message',this.obj)
+                this.value=''
+            })
+        },
+        // emoji
+        hide(){
+            this.showEmoji=false
+        },
+        handleHide(e){
+            this.hide()
+        },
+        handleSelect(img){
+            // if (img.nodeType === 3) {
+            //   var $img = new Image();
+            //   $img.src =  this.$refs.emoji.getImgPathByUnicode(img.textContent);
+            //   this.$refs.edit.appendChild($img);
+            // } 
+            // else {
+            //   var unicode = this.$refs.emoji.getUnicodeByImgPath(img.src);
+            //   var node = document.createTextNode(unicode);
+            //   this.$refs.edit.appendChild(node);
+            // }
+            // let unicode = this.$refs.emoji.getUnicodeByImgPath(img.src)
+            this.value+=img.textContent
+            this.hide()
         }
     },
     mounted(){
@@ -58,14 +98,45 @@ export default {
         .then(res => {
             if(res.data.get_userinfo){
                 this.obj.self=res.data.result.user_name
-                if(res.data.result.avatar_url) this.obj.avatar=res.data.result.avatar_url
+                // if(res.data.result.avatar_url) this.obj.avatar=res.data.result.avatar_url
+                this.obj.avatar=res.data.result.avatar_url
             }
         })
         // 接收
-        socket.on('chat message',obj => {
-            this.content.push(obj)
-            console.log(this.content)
+        this.socket.on('update message',obj => {
+            this.content=obj
+            // scrollHeight是自身元素的高度+隐藏元素的高度(offsetHeight+scrollTop)
+            // scrollTop是滚动条所滚条的高度，也就是隐藏的高度，如scrollTop值为12后，滑块的位置改变了，显示是卷过了12个像素的文本
+            // 收到消息时读取消息框的真实高度scrollHeight，然后让scrollTop等于它,即可滚动界面到最底部
+            // 但如果直接写scrollTop等于scrollHeight会有bug，滚动条都是滚动到倒数第二条数据上，解决方案是加nextTick
+            // http://blog.csdn.net/u014520745/article/details/70241772
+            this.$nextTick(() => {
+                this.$refs.chat.scrollTop=this.$refs.chat.scrollHeight
+             })
+            // console.log('scrollHeight:',this.$refs.chat.scrollHeight)
+            // console.log('scrollTop:',a)
         })
+
+        this.socket.on('update avatar success_chat',obj => {
+            this.content=obj
+        })
+        // 登陆成功或离开聊天室后更新在线人数统计
+        this.socket.on('login success',obj => {
+            this.count=obj.length
+        })
+        this.socket.on('disconnected',obj => {
+            this.count=obj.length
+        })
+
+        // emoji
+        this.$refs.emoji.appendTo({
+            area:this.$refs.edit,
+            btn:this.$refs.btn,
+            position:'top left'
+        })
+    },
+    components:{
+        'vue-emoji':emoji
     }
 }
 </script>
@@ -94,11 +165,6 @@ export default {
     /*color:gray;*/
     user-select: none;
 }
-/*section*/
-.chat-content{
-    height: 480px;
-    width: 100%;
-}
 
 /*bottom*/
 .message-input{
@@ -109,7 +175,7 @@ export default {
     bottom:0;*/
     display: flex;
 }
-.send-img,.send-emoji{
+.send-msg,.send-emoji{
     height: 40px;
     width:7%;
     background-color: rgba(255,255,255,.1);
@@ -118,7 +184,7 @@ export default {
     align-items: center;
     cursor: pointer;
 }
-.send-img{
+.send-msg{
     box-shadow: -1px 0 10px rgba(0,0,0,.1);
 }
 .send-emoji{
@@ -137,11 +203,18 @@ export default {
     /*去掉ios默认的蓝色焦点效果*/
     border: none;
     outline: none;
+    background-color: white;
 }
 /*聊天内容*/
 .chat-content{
-    overflow: scroll;
+    height: 480px;
+    width: 100%;
+    overflow: auto;
     position: relative;
+}
+/*可滚动但是不显示滚动条的方法*/
+::-webkit-scrollbar{
+    display:none;
 }
 .content-item{
     margin-top:10px;
@@ -159,14 +232,14 @@ export default {
     margin-left: 6px;
 }
 .self-name{
-
+    
 }
 .self-msg{
     max-width: 400px;
     word-wrap: break-word;
     background-color: #fff;
     border-radius: 5px;
-    padding: 3px;
+    padding: 5px;
     box-shadow: 0 4px 10px rgba(0,0,0,.2);
 }
 </style>

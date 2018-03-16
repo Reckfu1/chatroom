@@ -63,7 +63,6 @@ const registerAccount=async ctx => {
 const loginAccount=async ctx => {
     const {user_temp,password}=ctx.request.body
     const result=await user.getUserByName(user_temp)
-    console.log(`result is:${result}`)
 
     if(result!=null){
         // 首先验证密码是否错误

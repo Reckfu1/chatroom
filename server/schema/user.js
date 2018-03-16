@@ -21,12 +21,12 @@ export default function(sequelize, DataTypes) {
     user_profession: {
       type: DataTypes.CHAR(255),
       allowNull: true,
-      defaultValue: ''
+      defaultValue: 'Your Profession'
     },
     avatar_url: {
       type: DataTypes.CHAR(255),
-      allowNull: true,
-      defaultValue: ''
+      allowNull: false,
+      defaultValue: 'https://i.loli.net/2018/03/08/5aa02f6aa6cc0.jpg'
     },
     user_hobby: {
       type: DataTypes.CHAR(50),

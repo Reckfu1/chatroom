@@ -15,10 +15,10 @@
         </div>
         <div class="online-people">
             <span class="available">AVAILABLE NOW</span>
-            <div class="online-detail">
-                <img src="../assets/me.jpg">
+            <div class="online-detail" v-for="item in online">
+                <img :src="item.avatar_url">
                 <div class="people-wrapper">
-                    <span class="people-name">Kanye WestKa</span>
+                    <span class="people-name">{{item.user_name}}</span>
                     <!-- brightness 1 -->
                     <mu-icon value="brightness_1" :size="12" color="green" class="online-sign"/>
                 </div>
@@ -28,15 +28,19 @@
 </template>
 
 <script>
+// import io from 'socket.io-client'
+// const socket=io('http://localhost:3000')
 export default {
     data(){
         return {
             name:'',
             profession:'',
-            src:'https://i.loli.net/2018/03/08/5aa02f6aa6cc0.jpg'
+            src:'',
+            result:{},
+            online:[]
         }
     },
-    props:['message'],
+    props:['message','avatar'],
     methods:{
         // 这个userInfo组件的显示实现方法不同于loginPopup组件
         // 要利用一个中间事件来完成显示信息框，因为userInfo组件不在这里，而是在room.vue
@@ -54,15 +58,37 @@ export default {
         })
         .then(res => {
             if(res.data.get_userinfo){
+                // 先触发登录事件，更改在线人数列表
+                this.socket.emit('login',res.data.result)
                 this.name=res.data.result.user_name
                 this.profession=res.data.result.user_profession
-                if(res.data.result.avatar_url) this.src=res.data.result.avatar_url
+                // if(res.data.result.avatar_url) this.src=res.data.result.avatar_url
+                this.src=res.data.result.avatar_url
             }
+        })
+        // 更改在线人数成功
+        this.socket.on('login success',obj => {
+            this.online=obj
+        })
+        // 监听是否有人离线
+        this.socket.on('disconnected',obj => {
+            this.online=obj
+        })
+
+        // 监听是否用户更改了头像，更新在线人数信息
+        this.socket.on('update avatar success_online',obj => {
+            this.online=obj
         })
     },
     watch:{
         message(){
             this.profession=this.message
+        },
+        avatar(){
+            // 用户修改完头像后立刻显示
+            this.src=this.avatar
+            // 同时emit修改onLine数组，才能实时更新online人数中的头像
+            this.socket.emit('update avatar',this.name,this.avatar)
         }
     }
 }
@@ -153,6 +179,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    /*background-color: red;*/
 }
 .online-detail img{
     height: 25px;

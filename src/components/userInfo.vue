@@ -31,7 +31,7 @@ export default {
     data(){
         return {
             toggleInfoPopup:false,
-            src:"https://i.loli.net/2018/03/08/5aa02f6aa6cc0.jpg",
+            src:'',
             value:{
                 sex_value:'',
                 pro_value:'',
@@ -43,7 +43,8 @@ export default {
     methods:{
         hideUserInfo(){
             this.toggleInfoPopup=false
-            this.$emit('listenInUserInfoStatus')
+            // 监听的同时顺便把头像地址也发给onLine组件
+            this.$emit('listenInUserInfoStatus',this.src)
         },
         upload(res){
             if(res.code=='success'){
@@ -81,6 +82,7 @@ export default {
                 this.value.sex_value=temp.user_sex
                 this.value.pro_value=temp.user_profession
                 this.value.hobby_value=temp.user_hobby
+                this.src=temp.avatar_url
             }
         })
     },

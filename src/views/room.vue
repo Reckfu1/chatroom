@@ -3,7 +3,7 @@
         <div class="room-wrapper">
             <chatList></chatList>
             <chatInterface></chatInterface>
-            <onLine @middleEvent="realModify" :message="professionVal"></onLine>
+            <onLine @middleEvent="realModify" :message="professionVal" :avatar="src"></onLine>
         </div>
         <user-info :message="userInfoPopup" @listenInUserInfoStatus="changeStatus" class="animated fadeIn" @middleEventWatchPro="realWatchPro"></user-info>
     </div>
@@ -19,7 +19,8 @@ export default {
     data() {
         return {
             userInfoPopup:false,
-            professionVal:''
+            professionVal:'',
+            src:''
         }
     },
     components: {
@@ -32,8 +33,9 @@ export default {
         realModify(){
             this.userInfoPopup=true
         },
-        changeStatus(){
+        changeStatus(url){
             this.userInfoPopup=false
+            this.src=url
         },
         realWatchPro(val){
             this.professionVal=val

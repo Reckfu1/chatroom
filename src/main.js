@@ -14,6 +14,10 @@ Vue.prototype.axios=axios
 
 Vue.config.productionTip = false
 
+// 引入socketio
+import io from 'socket.io-client'
+const socket=io('http://localhost:3000')
+Vue.prototype.socket=socket
 
 /* eslint-disable no-new */
 new Vue({
