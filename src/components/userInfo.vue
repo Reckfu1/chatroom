@@ -66,6 +66,8 @@ export default {
                 // 用户修改完毕后，online组件中profession也要改变，所以要监听
                 // 同样的，userInfo->room通过emit传递数据，room->onLine通过props传递数据
                 // 但是这次是userInfo.vue -> room.vue -> onLine.vue
+                // 隐藏的话就反过来，在隐藏点击函数里触发listenInUserInfoStatus来更改room组件中userInfoPopup的值
+                // 简而言之，userInfoPopup是控制是否打开信息框，toggleInfoPopup控制是否显示信息框，两者关联即可
                 this.$emit('middleEventWatchPro',this.value.pro_value)
             })
         }

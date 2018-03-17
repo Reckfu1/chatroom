@@ -112,7 +112,7 @@ const verifyAccount=async ctx => {
     }
 }
 
-// 获取用户信息
+// 通过token获取用户信息
 const getUserInfo=async ctx => {
     const {token}=ctx.request.body
     let info=commonVerifyFunction(token)
@@ -128,6 +128,18 @@ const getUserInfo=async ctx => {
             ctx.body={
                 get_userinfo:false
             }
+        }
+    }
+}
+
+// 通过用户名获取用户信息
+const getUserInfoByName=async ctx =>{
+    const {name}=ctx.request.query
+    let result=await user.getUserByName(name)
+    if(result){
+        ctx.body={
+            get_userinfo_byname:true,
+            result
         }
     }
 }
@@ -176,5 +188,6 @@ export default{
     verifyAccount,
     uploadImg,
     modifyInfo,
-    getUserInfo
+    getUserInfo,
+    getUserInfoByName
 }

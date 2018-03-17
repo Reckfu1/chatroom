@@ -17,7 +17,8 @@
                 <mu-icon value="tag_faces" color="gray" :size="size" style="pointer-events:none;user-select:none"/>
             </div>
             <input type="text" class="typing" placeholder="Type something here..." v-model="value" @keyup.enter="send">
-            <!-- <span style="display:none" ref='edit'></span> -->
+            <!-- 这是个空的span 为了配合vue-emoji组件的属性使用，因为它必须要填写area -->
+            <span style="display:none" ref='edit'></span>
             <div class="send-msg">
                 <mu-icon value="arrow_upward" color="gray" :size="size" @click="send"/>
             </div>
@@ -26,6 +27,7 @@
             v-show='showEmoji'
             ref='emoji'
             :unicode='true'
+            :auto-insert='false'
             @select='handleSelect'
             @hide='handleHide'
         ></vue-emoji>
@@ -76,17 +78,8 @@ export default {
             this.hide()
         },
         handleSelect(img){
-            // if (img.nodeType === 3) {
-            //   var $img = new Image();
-            //   $img.src =  this.$refs.emoji.getImgPathByUnicode(img.textContent);
-            //   this.$refs.edit.appendChild($img);
-            // } 
-            // else {
-            //   var unicode = this.$refs.emoji.getUnicodeByImgPath(img.src);
-            //   var node = document.createTextNode(unicode);
-            //   this.$refs.edit.appendChild(node);
-            // }
-            // let unicode = this.$refs.emoji.getUnicodeByImgPath(img.src)
+            console.log('img:',img,'type:',typeof(img))
+            console.log('img.textContent:',img.textContent,'type:',typeof(img.textContent))
             this.value+=img.textContent
             this.hide()
         }
@@ -219,6 +212,7 @@ export default {
 .content-item{
     margin-top:10px;
     margin-left: 10px;
+    margin-bottom: 10px;
     width:95%;
     /*background-color: red;*/
     display: flex;

@@ -18,7 +18,7 @@
             <div class="online-detail" v-for="item in online">
                 <img :src="item.avatar_url">
                 <div class="people-wrapper">
-                    <span class="people-name">{{item.user_name}}</span>
+                    <span class="people-name" @click="lookPersonInfo(item.user_name)">{{item.user_name}}</span>
                     <!-- brightness 1 -->
                     <mu-icon value="brightness_1" :size="12" color="green" class="online-sign"/>
                 </div>
@@ -48,9 +48,11 @@ export default {
         // onLine.vue -> room.vue -> userInfo.vue
         modifyInfo(){
             this.$emit('middleEvent')
+        },
+        lookPersonInfo(name){
+            this.$emit('middleEventLookInfo',name)
         }
     },
-    // 必须用mounted，因为要用到this
     mounted(){
         // 获取用户 职业 头像地址
         this.axios.post('/auth/getinfo',{
@@ -167,6 +169,10 @@ export default {
 .online-people{
     height: 505px;
     width:100%;
+    overflow: auto;
+}
+::-webkit-scrollbar{
+    display:none;
 }
 .available{
     font-size: 12px;

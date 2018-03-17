@@ -3,9 +3,10 @@
         <div class="room-wrapper">
             <chatList></chatList>
             <chatInterface></chatInterface>
-            <onLine @middleEvent="realModify" :message="professionVal" :avatar="src"></onLine>
+            <onLine @middleEvent="realModify" @middleEventLookInfo="realLookInfo" :message="professionVal" :avatar="src"></onLine>
         </div>
-        <user-info :message="userInfoPopup" @listenInUserInfoStatus="changeStatus" class="animated fadeIn" @middleEventWatchPro="realWatchPro"></user-info>
+        <user-info :message="userInfoPopup" @listenInUserInfoStatus="changeUserInfoStatus" class="animated fadeIn" @middleEventWatchPro="realWatchPro"></user-info>
+        <person-info :message="personInfoPopup" :name="personName" @listenInPersonInfoStatus="changePersonInfoStatus" class="animated fadeIn"></person-info>
     </div>
 </template>
 
@@ -15,27 +16,38 @@ import chatList from '@/components/chatList'
 import chatInterface from '@/components/chatInterface'
 import onLine from '@/components/onLine'
 import userInfo from '@/components/userInfo'
+import personInfo from '@/components/personInfo'
 export default {
     data() {
         return {
             userInfoPopup:false,
             professionVal:'',
-            src:''
+            src:'',
+            personInfoPopup:false,
+            personName:''
         }
     },
     components: {
         chatList,
         chatInterface,
         onLine,
-        'user-info':userInfo
+        'user-info':userInfo,
+        'person-info':personInfo
     },
     methods:{
         realModify(){
             this.userInfoPopup=true
         },
-        changeStatus(url){
+        changeUserInfoStatus(url){
             this.userInfoPopup=false
             this.src=url
+        },
+        realLookInfo(name){
+            this.personInfoPopup=true
+            this.personName=name
+        },
+        changePersonInfoStatus(){
+            this.personInfoPopup=false
         },
         realWatchPro(val){
             this.professionVal=val

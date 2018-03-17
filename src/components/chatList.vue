@@ -1,7 +1,7 @@
 <template>
     <div id="chatlist">
         <div class="chat-item">
-            <img class="chat-item-img" src="../assets/josh-felise-79991.jpg"></img>
+            <img class="chat-item-img" src="https://i.loli.net/2018/03/08/5aa02f6aa6cc0.jpg"></img>
             <div class="chat-item-detail">
                 <div class="chat-item-name">Chatroom</div>
                 <div class="chat-item-content">{{message}}</div>
