@@ -63,7 +63,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url('../assets/ps-bg2.jpeg') no-repeat;
+    background: url('../assets/ps-bg.jpeg') no-repeat;
     background-size: 100% 100%;
 }
 .room-wrapper{
