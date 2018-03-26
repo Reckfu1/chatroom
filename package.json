@@ -22,6 +22,7 @@
     "muse-ui": "^2.1.0",
     "mysql": "^2.15.0",
     "mysql2": "^1.5.2",
+    "prismjs": "^1.13.0",
     "rui-vue-emoji": "^1.1.1",
     "sequelize": "^4.33.3",
     "socket.io": "^2.0.4",

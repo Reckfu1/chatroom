@@ -10,6 +10,9 @@ import auth from './routes/auth.js'
 import socket from 'socket.io'
 import http from 'http'
 
+//prismjs
+import Prism from 'prismjs'
+
 const app=new koa()
 const router=koaRouter()
 
@@ -30,10 +33,13 @@ io.on('connection',socket => {
     let currentIndex
     // console.log('a user connected')
 
-    socket.on('chat message',obj => {
+    socket.on('chat message',(obj,code) => {
         // console.log(`message is: ${msg}`)
         // socket.broadcast.emit('chat message',obj)
         // 添加聊天信息
+        if(code){
+            obj.message=Prism.highlight(obj.message, Prism.languages.javascript, 'javascript')
+        }
         content.push(obj)
         io.emit('update message',content)
         // 将最新的消息显示在房间名下面，时间也是

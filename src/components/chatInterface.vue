@@ -4,11 +4,11 @@
             <div class="room-name">Chatroom({{count}})</div>
         </div>
         <div class="chat-content" ref='chat'>
-            <div class="content-item" v-for="item in content">
+            <div class="content-item animated flash" v-for="item in content">
                 <img :src="item.avatar" alt="">
                 <div class="content-box">
                     <div class="self-name">{{item.self}}</div>
-                    <div class="self-msg">{{item.message}}</div>
+                    <div class="self-msg" v-html="item.message"></div>
                 </div>
             </div>
         </div>
@@ -20,7 +20,8 @@
             <!-- 这是个空的span 为了配合vue-emoji组件的属性使用，因为它必须要填写area -->
             <span style="display:none" ref='edit'></span>
             <div class="send-msg">
-                <mu-icon value="arrow_upward" color="gray" :size="size" @click="send"/>
+                <!-- <mu-icon value="arrow_upward" color="gray" :size="size" @click="send"/> -->
+                <mu-icon value="code" color="gray" :size="size" @click="sendCode"/>
             </div>
         </div>
         <vue-emoji
@@ -37,6 +38,8 @@
 <script>
 import 'rui-vue-emoji/dist/vue-emoji.css'
 import emoji from 'rui-vue-emoji'
+// prism.css
+import 'prismjs/themes/prism.css'
 export default {
     data () {
         return {
@@ -51,13 +54,18 @@ export default {
             content:[],
             count:0,
             // emoji
-            showEmoji:false
+            showEmoji:false,
+            // 权限
+            permission:'',
+            // 发送的是否为代码
+            isCode:false
         }
     },
     methods:{
         // 发送
         send(){
             if(this.value=='') return
+            this.isCode=false
             this.obj.message=this.value
             // 为了用户在修改完头像之后实时更新聊天内容中用户的头像，每次发信息都会请求一遍用户的最新头像地址
             this.axios.post('/auth/getinfo',{
@@ -66,9 +74,24 @@ export default {
             .then(res => {
                 this.obj.avatar=res.data.result.avatar_url
                 // 发送对象是想知道谁是发送人
-                this.socket.emit('chat message',this.obj)
+                this.socket.emit('chat message',this.obj,this.isCode)
                 this.value=''
             })
+        },
+        sendCode(){
+            if(this.value=='') return
+            this.isCode=true
+            this.obj.message=this.value
+            // 为了用户在修改完头像之后实时更新聊天内容中用户的头像，每次发信息都会请求一遍用户的最新头像地址
+            this.axios.post('/auth/getinfo',{
+                token:localStorage.getItem("token")
+            })
+            .then(res => {
+                this.obj.avatar=res.data.result.avatar_url
+                // 发送对象是想知道谁是发送人
+                this.socket.emit('chat message',this.obj,this.isCode)
+                this.value=''
+            })  
         },
         // emoji
         hide(){
@@ -82,6 +105,25 @@ export default {
             console.log('img.textContent:',img.textContent,'type:',typeof(img.textContent))
             this.value+=img.textContent
             this.hide()
+        },
+        getPermission(){
+            Notification.requestPermission(permission => {
+                if(permission==='granted'){
+                    console.log('用户允许接收通知')
+                    this.permission=permission
+                }
+                else{
+                    console.log('用户拒绝接收通知')
+                    this.permission=''
+                }
+            })
+        },
+        createNotification(icon,data){
+            const temp=new Notification('New Message',{
+                body:data,
+                icon
+            })
+            setTimeout(() => temp.close(),3500)
         }
     },
     mounted(){
@@ -95,6 +137,10 @@ export default {
                 this.obj.avatar=res.data.result.avatar_url
             }
         })
+
+        // 弹出通知框请求获取通知权限
+        this.getPermission()
+
         // 接收
         this.socket.on('update message',obj => {
             this.content=obj
@@ -106,8 +152,17 @@ export default {
             this.$nextTick(() => {
                 this.$refs.chat.scrollTop=this.$refs.chat.scrollHeight
              })
-            // console.log('scrollHeight:',this.$refs.chat.scrollHeight)
-            // console.log('scrollTop:',a)
+            if(this.permission==='granted'){
+                // console.log(obj[obj.length-1].message)
+                // 检查消息是否为空，防止第一次显示空白的通知，原因是逻辑写在了mounted
+                if(obj[obj.length-1].message){
+                    // 发送人不推送通知
+                    console.log(this.obj.self,'and',obj[obj.length-1].self)
+                    if(this.obj.self!=obj[obj.length-1].self){
+                        this.createNotification(obj[obj.length-1].avatar,obj[obj.length-1].message)
+                    }
+                }
+            }
         })
 
         this.socket.on('update avatar success_chat',obj => {

@@ -10,10 +10,8 @@
             </div>
         </div>
         <div class="chat-group-options">
-                    <!-- icon:add circle outline/people/person add/people outline/person/person outline -->
             <div class="chat-group-create">
                 <mu-icon value="person_add" :size="24" color="rgba(0,0,0,.5)"/>
-                    <!-- 为了对齐下面join group补两个空格 -->
                 <span>&nbsp;&nbsp;Create Group</span>
             </div>
             <div class="chat-group-join">
